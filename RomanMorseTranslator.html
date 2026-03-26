@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roman Morse Translator</title>
+</head>
+<body>
+
+	<h1>ROMAN MORSE TRANSLATOR</h1>
+	<div class="container">
+		<div class="MessageToCipher">
+			<label for="MtoC">Message To Cipher</label><br>
+			<textarea id="from-message" placeholder="Enter your message..." rows="4" cols="50"></textarea>
+			<textarea id="to-cipher" readonly placeholder="Encoded text goes here..." rows="4" cols="50"></textarea>
+		</div>
+		<br>
+		<div class="CipherToMessage">
+			<label for="CtoM">Cipher To Message</label><br>
+			<textarea id="from-cipher" placeholder="Enter cipher here..." rows="4" cols="50"></textarea>
+			<textarea id="to-message" readonly placeholder="Decoded message goes here" rows="4" cols="50"></textarea>
+		</div>
+	</div>
+	
+	<script>
+	const charMap = {
+	'a': '.',
+	'b': '..',
+	'c': '...',
+	'd': '.-',
+	'e': '-',
+	'f': '-.',
+	'g': '-..',
+	'h': '-...',
+	'i': '.--',
+	'j': '--',
+	'k': '--.',
+	'l': '--..',
+	'm': '--...',
+	'n': '--.-',
+	'o': '---',
+	'p': '---.',
+	'q': '---..',
+	'r': '---...',
+	's': '--.--',
+	't': '-.-',
+	'u': '-.-.',
+	'v': '-.-..',
+	'w': '-.-...',
+	'x': '-.-.-',
+	'y': '-.--',
+	'z': '-.--.'
+};
+
+
+// Reverse map (symbol → letter)
+const reverseMap = {};
+for (const letter in charMap) {
+	reverseMap[charMap[letter]] = letter;
+}
+
+// ---------- ENCODE ----------
+function encodeText() {
+	const input = document.getElementById('from-message').value.toLowerCase();
+
+	const result = input.split(' ').map(word => {
+		return word.split('').map(char => {
+			if (charMap[char]) {
+				return charMap[char]; // no numbers anymore
+			}
+			return char;
+		}).join('/'); // between letters
+	}).join('//'); // between words
+
+	document.getElementById('to-cipher').value = result;
+}
+// ---------- DECODE ----------
+function decodeText() {
+	const input = document.getElementById('from-cipher').value;
+
+	const words = input.split('//');
+	let result = '';
+
+	words.forEach((word, wIndex) => {
+		const chars = word.split('/');
+
+		chars.forEach(symbol => {
+			const letter = reverseMap[symbol];
+			if (letter) {
+				result += letter;
+			}
+		});
+
+		if (wIndex < words.length - 1) {
+			result += ' ';
+		}
+	});
+
+	document.getElementById('to-message').value = result;
+}
+// ---------- EVENT LISTENERS ----------
+document.getElementById('from-message').addEventListener('input', encodeText);
+document.getElementById('from-cipher').addEventListener('input', decodeText);
+	</script>
+</body>
+</html>
